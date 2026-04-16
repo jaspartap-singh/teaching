@@ -1,0 +1,388 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{max-width:800px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.hdr{border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.hdr h1{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.hdr p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.meta{display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap;align-items:center}
+.pill{font-size:12px;padding:3px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);background:var(--color-background-secondary)}
+.timer{font-size:20px;font-weight:500;color:var(--color-text-primary);font-variant-numeric:tabular-nums;margin-left:auto}
+.tbtn{font-size:12px;padding:3px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.tbtn:hover{background:var(--color-background-secondary)}
+.pbar-wrap{height:3px;background:var(--color-background-secondary);border-radius:2px;margin-top:1rem}
+.pbar{height:3px;background:#534AB7;border-radius:2px;transition:width 0.3s;width:0%}
+.qcard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.qtop{display:flex;gap:10px;align-items:flex-start}
+.qnum{font-size:12px;font-weight:500;color:var(--color-text-tertiary);min-width:22px;padding-top:2px}
+.qtext{font-size:15px;color:var(--color-text-primary);line-height:1.6;flex:1}
+.qmark{font-size:12px;color:var(--color-text-tertiary);white-space:nowrap}
+.opts{margin-top:1rem;display:flex;flex-direction:column;gap:8px;padding-left:32px}
+.opt{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid transparent;transition:border-color 0.15s}
+.opt:hover{border-color:var(--color-border-tertiary);background:var(--color-background-secondary)}
+.opt input{accent-color:#534AB7;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+.opt label{font-size:14px;color:var(--color-text-primary);cursor:pointer;line-height:1.5}
+.opt.sel label{color:#534AB7;font-weight:500}
+.opt.correct-opt{background:#E1F5EE;border-color:#1D9E75}
+.opt.correct-opt label{color:#085041;font-weight:500}
+.opt.wrong-opt{background:#FAECE7;border-color:#D85A30}
+.opt.wrong-opt label{color:#993C1D;font-weight:500}
+.fb{font-size:12px;margin-top:6px;padding-left:32px}
+.fb.ok{color:#0F6E56}.fb.no{color:#993C1D}
+.graph-wrap{margin:1rem 0 0.5rem 32px}
+canvas.gc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary)}
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1rem 0 0 32px}
+.img-opt{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px;cursor:pointer;transition:border-color 0.15s}
+.img-opt:hover{border-color:var(--color-border-secondary)}
+.img-opt.sel-img{border:2px solid #534AB7}
+.img-opt.correct-img{border:2px solid #1D9E75;background:#E1F5EE}
+.img-opt.wrong-img{border:2px solid #D85A30;background:#FAECE7}
+.img-opt canvas{display:block}
+.img-label{font-size:11px;text-align:center;color:var(--color-text-tertiary);margin-top:3px}
+.sub-row{display:flex;justify-content:space-between;align-items:center;margin-top:2rem}
+.ptxt{font-size:13px;color:var(--color-text-secondary)}
+.sbtn{padding:10px 24px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-size:14px;font-weight:500;cursor:pointer}
+.sbtn:hover{background:var(--color-background-secondary)}
+.result{border-radius:var(--border-radius-lg);padding:1.5rem;margin-top:1.5rem;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);text-align:center}
+.rscore{font-size:36px;font-weight:500;color:var(--color-text-primary)}
+.rsub{font-size:14px;color:var(--color-text-secondary);margin-top:6px}
+.rgrade{font-size:16px;font-weight:500;margin-top:10px}
+.mi{font-style:italic;font-family:Georgia,serif}
+</style>
+
+<div class="wrap">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">MCQ test on functions, composition, and invertibility. 11 questions, 60 minutes.</h2>
+
+<div class="hdr">
+  <h1>Functions — Composition &amp; Invertibility</h1>
+  <p>Choose one answer per question. All questions carry 1 mark.</p>
+  <div class="meta">
+    <span class="pill">11 questions</span>
+    <span class="pill">11 marks</span>
+    <span class="timer" id="tmr">60:00</span>
+    <button class="tbtn" id="tbtn" onclick="toggleT()">Start</button>
+  </div>
+  <div class="pbar-wrap"><div class="pbar" id="pb"></div></div>
+</div>
+
+<div id="qlist"></div>
+
+<div class="sub-row">
+  <span class="ptxt" id="ptxt">0 of 11 answered</span>
+  <button class="sbtn" onclick="submit()">Submit test</button>
+</div>
+<div id="result"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<script>
+var secs=3600,running=false,iv=null,done=false;
+var sel={};
+
+function toggleT(){
+  var b=document.getElementById('tbtn');
+  if(!running){running=true;b.textContent='Pause';
+    iv=setInterval(function(){
+      secs--;if(secs<=0){secs=0;clearInterval(iv);}
+      var m=Math.floor(secs/60),s=secs%60;
+      document.getElementById('tmr').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+      if(secs<=300)document.getElementById('tmr').style.color='#D85A30';
+    },1000);
+  } else {running=false;b.textContent='Resume';clearInterval(iv);}
+}
+
+function updP(){
+  var n=Object.keys(sel).length;
+  document.getElementById('ptxt').textContent=n+' of 11 answered';
+  document.getElementById('pb').style.width=Math.round(n/11*100)+'%';
+}
+
+function drawGrid(ctx,W,H){
+  ctx.strokeStyle='#e0e0e0';ctx.lineWidth=0.5;
+  var step=30;
+  for(var x=0;x<=W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(var y=0;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(0,y);ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle='#999';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+}
+
+function plotFn(ctx,W,H,fn,color,xmin,xmax,ymin,ymax){
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+  var first=true;
+  for(var px=0;px<=W;px++){
+    var xv=xmin+(px/W)*(xmax-xmin);
+    var yv;
+    try{yv=fn(xv);}catch(e){first=true;continue;}
+    if(!isFinite(yv)||Math.abs(yv)>1e6){first=true;continue;}
+    var py=H-(yv-ymin)/(ymax-ymin)*H;
+    if(first){ctx.moveTo(px,py);first=false;}else{ctx.lineTo(px,py);}
+  }
+  ctx.stroke();
+}
+
+function makeCanvas(id,W,H){
+  var c=document.createElement('canvas');
+  c.id=id;c.width=W;c.height=H;c.className='gc';
+  c.style.width=W+'px';c.style.height=H+'px';
+  return c;
+}
+
+function drawQ3(canvasId){
+  var c=document.getElementById(canvasId);if(!c)return;
+  var ctx=c.getContext('2d'),W=220,H=180;
+  drawGrid(ctx,W,H);
+  plotFn(ctx,W,H,function(x){return Math.pow(x,2);},'#534AB7',-5,5,-2,10,W,H);
+}
+
+function drawQ6Graphs(prefix){
+  var configs=[
+    {f:function(x){return x>=2?-1-Math.pow(x-2,2):NaN;},fi:function(y){return y<=-1?2+Math.sqrt(-1-y):NaN;},fColor:'#534AB7',fiColor:'#D85A30',xmin:-5,xmax:5,ymin:-5,ymax:4,label:'Option A'},
+    {f:function(x){return x>=2?-1-Math.pow(x-2,2):NaN;},fi:function(y){return y<=-1?2-Math.sqrt(-1-y):NaN;},fColor:'#534AB7',fiColor:'#D85A30',xmin:-5,xmax:5,ymin:-5,ymax:4,label:'Option B'},
+    {f:function(x){return x>=2?-1-Math.pow(x-2,2):NaN;},fi:function(y){return y<=-1?2+Math.sqrt(-1-y):NaN;},fColor:'#534AB7',fiColor:'#D85A30',flip:true,xmin:-5,xmax:5,ymin:-5,ymax:4,label:'Option C (correct)'},
+    {f:function(x){return x>=2?-1-Math.pow(x-2,2):NaN;},fi:function(y){return y<=-1?2+Math.sqrt(-1-y):NaN;},fColor:'#534AB7',fiColor:'#D85A30',xmin:-5,xmax:5,ymin:-6,ymax:5,label:'Option D'},
+  ];
+  configs.forEach(function(cfg,i){
+    var c=document.getElementById(prefix+i);if(!c)return;
+    var ctx=c.getContext('2d'),W=160,H=140;
+    drawGrid(ctx,W,H);
+    var xmin=cfg.xmin,xmax=cfg.xmax,ymin=cfg.ymin,ymax=cfg.ymax;
+    function toP(xv,yv){return{x:(xv-xmin)/(xmax-xmin)*W,y:H-(yv-ymin)/(ymax-ymin)*H};}
+    ctx.strokeStyle=cfg.fColor;ctx.lineWidth=2;ctx.beginPath();var first=true;
+    for(var px=0;px<=W;px++){var xv=xmin+(px/W)*(xmax-xmin);var yv;try{yv=cfg.f(xv);}catch(e){first=true;continue;}
+      if(!isFinite(yv)){first=true;continue;}var p=toP(xv,yv);if(first){ctx.moveTo(p.x,p.y);first=false;}else ctx.lineTo(p.x,p.y);}ctx.stroke();
+    ctx.strokeStyle=cfg.fiColor;ctx.lineWidth=2;ctx.beginPath();first=true;
+    for(var py2=0;py2<=H;py2++){var yv2=ymin+(1-py2/H)*(ymax-ymin);var xv2;try{xv2=cfg.fi(yv2);}catch(e){first=true;continue;}
+      if(!isFinite(xv2)){first=true;continue;}var p2=toP(xv2,yv2);if(first){ctx.moveTo(p2.x,p2.y);first=false;}else ctx.lineTo(p2.x,p2.y);}ctx.stroke();
+    if(i===2){
+      ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(0,H);ctx.lineTo(W,0);ctx.stroke();ctx.setLineDash([]);
+    }
+    ctx.fillStyle='#534AB7';ctx.font='10px sans-serif';ctx.fillText('f(x)',W-28,H/2-8);
+    ctx.fillStyle='#D85A30';ctx.fillText('f⁻¹(x)',4,12);
+    ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.fillText(cfg.label,4,H-4);
+  });
+}
+
+function drawQ7(canvasId){
+  var c=document.getElementById(canvasId);if(!c)return;
+  var ctx=c.getContext('2d'),W=220,H=180;
+  var xmin=-5,xmax=5,ymin=-2,ymax=7;
+  drawGrid(ctx,W,H);
+  plotFn(ctx,W,H,function(x){return x*x+3;},'#534AB7',xmin,xmax,ymin,ymax,W,H);
+  ctx.fillStyle='#534AB7';ctx.font='11px sans-serif';ctx.fillText('f(x)',W-35,20);
+  function toP(xv,yv){return{x:(xv-xmin)/(xmax-xmin)*W,y:H-(yv-ymin)/(ymax-ymin)*H};}
+  [-4,-3,-2,-1,0,1,2,3,4].forEach(function(v){
+    var p=toP(v,ymin+(ymax-ymin)*0.02);ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.fillText(v,p.x-4,p.y+10);
+  });
+}
+
+function drawQ8Graphs(prefix){
+  var configs=[
+    {f:function(x){return x;},g:function(x){return -2*x;},fC:'#534AB7',gC:'#D85A30',xmin:-4,xmax:4,ymin:-4,ymax:4,label:'Option A'},
+    {f:function(x){return x;},g:function(x){return -2*x;},fC:'#534AB7',gC:'#D85A30',xmin:-4,xmax:4,ymin:-4,ymax:4,label:'Option B (shifted)'},
+    {f:function(x){return x;},g:function(x){return -2*x;},fC:'#534AB7',gC:'#D85A30',xmin:-4,xmax:4,ymin:-4,ymax:4,label:'Option C'},
+    {f:function(x){return x;},g:function(x){return -2*x;},fC:'#534AB7',gC:'#D85A30',xmin:-4,xmax:4,ymin:-4,ymax:4,label:'Option D (correct)'},
+  ];
+  configs.forEach(function(cfg,i){
+    var c=document.getElementById(prefix+i);if(!c)return;
+    var ctx=c.getContext('2d'),W=160,H=140;
+    var xmin=cfg.xmin,xmax=cfg.xmax,ymin=cfg.ymin,ymax=cfg.ymax;
+    drawGrid(ctx,W,H);
+    var slopes=[[1,-2],[0.5,-2],[1,-1],[1,-2]];
+    var s=slopes[i];
+    plotFn(ctx,W,H,function(x){return s[0]*x;},cfg.fC,xmin,xmax,ymin,ymax,W,H);
+    plotFn(ctx,W,H,function(x){return s[1]*x;},cfg.gC,xmin,xmax,ymin,ymax,W,H);
+    ctx.fillStyle=cfg.fC;ctx.font='10px sans-serif';ctx.fillText('f(x)',W-30,10);
+    ctx.fillStyle=cfg.gC;ctx.fillText('g(x)',4,H-4);
+    ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.fillText(cfg.label,4,H-14);
+  });
+}
+
+var qs=[
+  {
+    id:0,
+    stem:'Consider the following functions: <span class="mi">f(x) = x/(x+1)</span> and <span class="mi">g(x) = 1/(x+3)</span>. Find the domain of <span class="mi">(f ∘ g)(x)</span>.',
+    opts:['ℝ − {−4, 3}','ℝ − {4, −3}','ℝ − {−4, −3}','ℝ − {4, 3}'],
+    ans:2
+  },
+  {
+    id:1,
+    stem:'Using the same functions <span class="mi">f(x) = x/(x+1)</span> and <span class="mi">g(x) = 1/(x+3)</span>, find the domain of <span class="mi">(g ∘ f)(x)</span>.',
+    opts:['(−∞, −¾] ∪ (¾, ∞)','(−∞, −¾) ∪ [¾, ∞)','(−∞, −¾) ∪ (−¾, ∞)','(−∞, −¾] ∪ [¾, ∞)'],
+    ans:1
+  },
+  {
+    id:2,
+    stem:'A fitness coach finds: sessions <span class="mi">S(t) = 5 + 3t</span> (weeks), calories per session <span class="mi">C(n) = 500 − 10n</span>. Which expression represents average calories burned per session in terms of weeks?',
+    opts:['500 − 30t','450 − 30t','500 + 30t','450 + 30t'],
+    ans:1
+  },
+  {
+    id:3,
+    stem:'Consider <span class="mi">f(x) = −(1/3)x² − 5, x ≥ 0</span>. Which of the following represents <span class="mi">f⁻¹(x)</span>?',
+    opts:['√(−3x − 15)','√(3x + 15)','−√(−3x − 15)','√(3x − 15)'],
+    ans:0
+  },
+  {
+    id:4,
+    stem:'If <span class="mi">f(x) = (3x+7)/(5x+3), x ≠ −3/5</span>, find <span class="mi">f⁻¹(2)</span>.',
+    opts:['1/7','−1/7','7','−7'],
+    ans:0
+  },
+  {
+    id:5,
+    stem:'Consider <span class="mi">f(x) = −1 − (x−2)², x ≥ 2</span>. Which graph correctly shows both <span class="mi">f</span> and <span class="mi">f⁻¹</span>? (Blue = f, Red = f⁻¹)',
+    type:'graph4',
+    graphPrefix:'q6g',
+    opts:['Option A','Option B','Option C','Option D'],
+    ans:2
+  },
+  {
+    id:6,
+    stem:'The graph below shows a function <span class="mi">f</span>. To which interval could the domain of <span class="mi">f</span> be restricted to make it invertible?',
+    type:'graph1',
+    graphId:'q7g',
+    opts:['[−2, 2]','[−1, 0]','[−2, ∞)','(−∞, 2]'],
+    ans:1
+  },
+  {
+    id:7,
+    stem:'If <span class="mi">g(x) = −2f(x)</span>, which graphs could represent <span class="mi">f(x)</span> and <span class="mi">g(x)</span>? (Blue = f, Red = g)',
+    type:'graph4',
+    graphPrefix:'q8g',
+    opts:['Option A','Option B','Option C','Option D'],
+    ans:3
+  },
+  {
+    id:8,
+    stem:'Consider <span class="mi">f(x) = 2x − 5</span> defined over domain <span class="mi">[−1, 3]</span>. If <span class="mi">g</span> is a vertically-scaled version of the reflection of <span class="mi">f</span> in the x-axis by a factor of 4, what is the range of <span class="mi">g</span>?',
+    opts:['[−4, 28]','[4, −28]','[−28, 4]','[28, −4]'],
+    ans:0
+  },
+  {
+    id:9,
+    stem:'Consider <span class="mi">p(x) = |x + 33| + 42</span> and <span class="mi">q(x) = p(x/3)</span>. Which of the following represents the range of <span class="mi">q</span>?',
+    opts:['[−∞, 33)','(−∞, −42]','[42, ∞)','[−33, ∞)'],
+    ans:2
+  },
+  {
+    id:10,
+    stem:'Consider <span class="mi">p(x) = |x − 10| − 4</span> and <span class="mi">q(x) = −9p(x)</span>. Which of the following represents the range of <span class="mi">q</span>?',
+    opts:['[−10, ∞)','(−∞, 10]','(−∞, 36]','[−36, ∞)'],
+    ans:2
+  }
+];
+
+function render(){
+  var html='';
+  qs.forEach(function(q,qi){
+    html+='<div class="qcard" id="qc'+qi+'">';
+    html+='<div class="qtop"><span class="qnum">'+(qi+1)+'.</span><span class="qtext">'+q.stem+'</span><span class="qmark">1 mark</span></div>';
+
+    if(q.type==='graph1'){
+      html+='<div class="graph-wrap"><canvas class="gc" id="'+q.graphId+'" width="220" height="180" style="width:220px;height:180px"></canvas></div>';
+      html+='<div class="opts">';
+      q.opts.forEach(function(o,oi){
+        html+='<label class="opt" id="o'+qi+'_'+oi+'"><input type="radio" name="q'+qi+'" value="'+oi+'" onchange="pick('+qi+','+oi+')"><span>'+o+'</span></label>';
+      });
+      html+='</div>';
+    } else if(q.type==='graph4'){
+      html+='<div class="img-grid" id="'+q.graphPrefix+'grid">';
+      for(var gi=0;gi<4;gi++){
+        html+='<div class="img-opt" id="ig'+qi+'_'+gi+'" onclick="pickImg('+qi+','+gi+')">';
+        html+='<canvas id="'+q.graphPrefix+gi+'" width="160" height="140" style="width:160px;height:140px"></canvas>';
+        html+='<div class="img-label">'+q.opts[gi]+'</div>';
+        html+='</div>';
+      }
+      html+='</div>';
+    } else {
+      html+='<div class="opts">';
+      q.opts.forEach(function(o,oi){
+        html+='<label class="opt" id="o'+qi+'_'+oi+'"><input type="radio" name="q'+qi+'" value="'+oi+'" onchange="pick('+qi+','+oi+')"><span>'+o+'</span></label>';
+      });
+      html+='</div>';
+    }
+    html+='<div id="fb'+qi+'"></div>';
+    html+='</div>';
+  });
+  document.getElementById('qlist').innerHTML=html;
+
+  setTimeout(function(){
+    drawQ7('q7g');
+    drawQ6Graphs('q6g');
+    drawQ8Graphs('q8g');
+  },100);
+}
+
+function pick(qi,oi){
+  if(done)return;
+  sel[qi]=oi;
+  for(var j=0;j<qs[qi].opts.length;j++){
+    var el=document.getElementById('o'+qi+'_'+j);
+    if(el)el.classList.toggle('sel',j===oi);
+  }
+  updP();
+}
+
+function pickImg(qi,oi){
+  if(done)return;
+  sel[qi]=oi;
+  for(var j=0;j<4;j++){
+    var el=document.getElementById('ig'+qi+'_'+j);
+    if(el)el.classList.toggle('sel-img',j===oi);
+  }
+  updP();
+}
+
+function submit(){
+  if(done)return;
+  done=true;clearInterval(iv);
+  document.getElementById('tbtn').textContent='Done';
+
+  var score=0;
+  qs.forEach(function(q,qi){
+    var userAns=sel[qi];
+    var correct=userAns===q.ans;
+    if(correct)score++;
+    var card=document.getElementById('qc'+qi);
+    var fb=document.getElementById('fb'+qi);
+
+    if(q.type==='graph4'){
+      for(var j=0;j<4;j++){
+        var ig=document.getElementById('ig'+qi+'_'+j);
+        if(!ig)continue;
+        ig.classList.remove('sel-img');
+        if(j===q.ans)ig.classList.add('correct-img');
+        else if(j===userAns&&!correct)ig.classList.add('wrong-img');
+      }
+    } else {
+      for(var j=0;j<q.opts.length;j++){
+        var op=document.getElementById('o'+qi+'_'+j);
+        if(!op)continue;
+        op.classList.remove('sel');
+        if(j===q.ans)op.classList.add('correct-opt');
+        else if(j===userAns&&!correct)op.classList.add('wrong-opt');
+      }
+    }
+
+    if(userAns===undefined){
+      fb.innerHTML='<p class="fb no">Not answered — correct: '+q.opts[q.ans]+'</p>';
+    } else if(correct){
+      fb.innerHTML='<p class="fb ok">Correct</p>';
+    } else {
+      fb.innerHTML='<p class="fb no">Incorrect — correct answer: '+q.opts[q.ans]+'</p>';
+    }
+  });
+
+  var pct=Math.round(score/qs.length*100);
+  var grade=pct>=80?'Excellent work!':pct>=60?'Good effort — review the incorrect answers.':'Keep practising — revisit your notes on composition and invertibility.';
+  document.getElementById('result').innerHTML=
+    '<div class="result"><div class="rscore">'+score+' / '+qs.length+'</div>'+
+    '<div class="rsub">'+pct+'% — '+qs.length+' questions</div>'+
+    '<div class="rgrade">'+grade+'</div></div>';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+render();updP();
+</script>
